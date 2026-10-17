@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="tr">
 <head>
@@ -42,13 +43,13 @@
     </div>
 
     <script>
-        // 🌟 BOTA ÖĞRETMEK İSTEDİĞİNİZ ANAHTAR KELİMELERİ VE CEVAPLARI BURAYA EKLEYİN 🌟
+        // 🌟 BOTA ÖĞRETMEK İSTEDİĞİNİZ ANAHTAR KELİMELER VE CEVAPLAR 🌟
         let hafiza = {
             "merhaba": "Merhaba! Sana nasıl yardımcı olabilirim?",
             "selam": "Selam! Nasıl gidiyor?",
             "nasılsın": "Harika çalışıyorum ve cümlelerinizi analiz ediyorum! Sen nasılsın?",
             "adın": "Benim bir adım yok geliştirilmiş yapay zekayım.",
-            "kimsin": "Senin kurallarınla çalışan, sadece senin öğrettiklerini analiz eden bir yardımcıyım.",
+            "kimsin": "Ben bir yapay zekayım sorularınızı yanıtlayan size yardımcı olmak için tasarlandım.",
             "renk": "Ben kodlardan oluştuğum için en sevdiğin renk dijital mavidir!",
             "başkent": "Türkiye'nin başkenti Ankara'dır.",
             "hava": "Bulunduğun yerin havasını göremiyorum ama sistemlerimin içi oldukça serin!",
@@ -78,16 +79,17 @@
             }
 
             if (bulunanCevap) {
-                setTimeout(() => ekranaYaz(bulunanCevap, "bot"), 500);
+                setTimeout(function() {
+                    ekranaYaz(bulunanCevap, "bot");
+                }, 500);
             } else {
-                // Soru bilinmiyorsa Google Arama Butonlu Mesajı Gönder
-                setTimeout(() => {
-                    let googleLink = `https://google.com{encodeURIComponent(metin)}`;
+                // Soru bilinmiyorsa Hatasız Google Arama Butonunu Çıkarır
+                setTimeout(function() {
+                    let googleLink = "https://google.com" + encodeURIComponent(metin);
                     
                     let div = document.createElement("div");
                     div.className = "msg bot";
-                    div.innerHTML = `Yazdığın cümleyi analiz ettim ancak bu konuyu henüz bilmiyorum.<br>
-                                     <a href="${googleLink}" target="_blank" class="google-btn">🔍 Google'da Ara</a>`;
+                    div.innerHTML = "Yazdığın cümleyi analiz ettim ancak bu konuyu henüz bilmiyorum.<br><a href='" + googleLink + "' target='_blank' class='google-btn'>🔍 Google'da Ara</a>";
                     
                     chatBox.appendChild(div);
                     chatBox.scrollTop = chatBox.scrollHeight;
@@ -97,7 +99,7 @@
 
         function ekranaYaz(mesaj, kim) {
             let div = document.createElement("div");
-            div.className = `msg ${kim}`;
+            div.className = "msg " + kim;
             div.innerText = mesaj;
             chatBox.appendChild(div);
             chatBox.scrollTop = chatBox.scrollHeight;
