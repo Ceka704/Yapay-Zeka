@@ -7,40 +7,35 @@
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
         body { background-color: #f0f4f9; display: flex; flex-direction: column; height: 100vh; }
-        
-        /* Üst Menü */
         .header { background: white; padding: 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e0e0e0; font-weight: bold; }
         .header-title { color: #333; }
-
-        /* Sohbet Alanı */
         .chat-container { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; }
         .msg { max-width: 80%; padding: 12px 16px; border-radius: 8px; line-height: 1.5; font-size: 15px; }
         .bot { background: white; align-self: flex-start; border-left: 4px solid #1a73e8; color: #333; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
         .user { background: #1a73e8; color: white; align-self: flex-end; }
-
-        /* Alt Giriş Alanı */
         .input-area { background: white; padding: 15px; display: flex; gap: 10px; border-top: 1px solid #e0e0e0; }
         input { flex: 1; padding: 12px; border: 1px solid #ccc; border-radius: 8px; font-size: 15px; outline: none; }
         input:focus { border-color: #1a73e8; }
         .send-btn { background: #1a73e8; color: white; border: none; padding: 0 20px; border-radius: 8px; font-weight: bold; cursor: pointer; }
         .send-btn:hover { background: #1557b5; }
+        
+        /* Google Arama Butonu Tasarımı */
+        .google-btn { display: inline-block; margin-top: 8px; background: #1a73e8; color: white; text-decoration: none; padding: 6px 12px; border-radius: 4px; font-size: 13px; font-weight: bold; }
+        .google-btn:hover { background: #1557b5; }
     </style>
 </head>
 <body>
 
-    <!-- Üst Bar -->
     <div class="header">
         <span class="header-title">Kendi Yapay Zekam</span>
     </div>
 
-    <!-- Mesajlaşma Ekranı -->
     <div class="chat-container" id="chatBox">
         <div class="msg bot">
-            Merhaba! Size nasıl yardımcı olabilirim.
+            Merhaba! Ben sadece geliştiricimin bana öğrettiği konuları analiz edip cevap verebilirim. Bilmediğim bir şey sorarsanız Google'da aratmanıza yardımcı olabilirim!
         </div>
     </div>
 
-    <!-- Mesaj Gönderme Kutusu -->
     <div class="input-area">
         <input type="text" id="userInput" placeholder="Bir şey yaz..." onkeypress="handleEnter(event)">
         <button class="send-btn" onclick="mesajGonder()">Gönder</button>
@@ -48,21 +43,18 @@
 
     <script>
         // 🌟 BOTA ÖĞRETMEK İSTEDİĞİNİZ ANAHTAR KELİMELERİ VE CEVAPLARI BURAYA EKLEYİN 🌟
-        // Kullanıcı uzun bir cümle yazsa bile, cümlenin içinde buradaki kelimeyi bulursa cevabı verir.
-        // Sol taraftaki anahtar kelimeleri daima tek kelime ve KÜÇÜK HARFLE yazın.
-           let hafiza = {
+        let hafiza = {
             "merhaba": "Merhaba! Sana nasıl yardımcı olabilirim?",
             "selam": "Selam! Nasıl gidiyor?",
             "nasılsın": "Harika çalışıyorum ve cümlelerinizi analiz ediyorum! Sen nasılsın?",
             "adın": "Benim bir adım yok geliştirilmiş yapay zekayım.",
-            "kimsin": "Ben bir yapay zekayım sorularınızı yanıtlayan size yardımcı olmak için tasarlandım.",
-            "renk": "Ben kodlardan oluştuğum için en sevdiğim renk dijital mavidir!",
+            "kimsin": "Senin kurallarınla çalışan, sadece senin öğrettiklerini analiz eden bir yardımcıyım.",
+            "renk": "Ben kodlardan oluştuğum için en sevdiğin renk dijital mavidir!",
             "başkent": "Türkiye'nin başkenti Ankara'dır.",
             "hava": "Bulunduğun yerin havasını göremiyorum ama sistemlerimin içi oldukça serin!",
             "yaş": "Ben bir yazılımım, dolayısıyla doğum günüm kodumun yazıldığı gündür!",
             "azerbaycan ve türkiye": "Azerbaycan ve Türkiye kardeş ülkedir kökenleri birdir hepsi Türk soyundan gelir dilleride benzerdir bu yüzden başka ne bilmek isterisin."
         };
-
 
         const chatBox = document.getElementById("chatBox");
         const userInput = document.getElementById("userInput");
@@ -71,31 +63,34 @@
             let metin = userInput.value.trim();
             if (metin === "") return;
 
-            // Kullanıcı mesajını ekrana yazdır
             ekranaYaz(metin, "user");
             userInput.value = "";
 
-            // Kullanıcının yazdığı cümleyi küçük harfe çevir
             let normalizeMetin = metin.toLowerCase();
-            
             let bulunanCevap = null;
 
-            // CÜMLE ANALİZ MEKANİZMASI: Hafızadaki kelimeler kullanıcının cümlesinin içinde geçiyor mu?
+            // Cümle Analiz Mekanizması
             for (let anahtarKelime in hafiza) {
                 if (normalizeMetin.includes(anahtarKelime)) {
                     bulunanCevap = hafiza[anahtarKelime];
-                    break; // İlk eşleşen kelimeyi bulduğunda aramayı durdurur
+                    break;
                 }
             }
 
-            // Cevap Verme Süreci
             if (bulunanCevap) {
-                // Eğer cümlenin içinde senin öğrettiğin anahtar kelime bulunduysa cevabı yapıştırır
                 setTimeout(() => ekranaYaz(bulunanCevap, "bot"), 500);
             } else {
-                // Eşleşen hiçbir kelime bulamazsa doğrudan bilmiyorum der
+                // Soru bilinmiyorsa Google Arama Butonlu Mesajı Gönder
                 setTimeout(() => {
-                    ekranaYaz("Yazdığın cümleyi analiz ettim ancak bilmediğim bir konu. Bunu bana henüz öğretmedin.", "bot");
+                    let googleLink = `https://google.com{encodeURIComponent(metin)}`;
+                    
+                    let div = document.createElement("div");
+                    div.className = "msg bot";
+                    div.innerHTML = `Yazdığın cümleyi analiz ettim ancak bu konuyu henüz bilmiyorum.<br>
+                                     <a href="${googleLink}" target="_blank" class="google-btn">🔍 Google'da Ara</a>`;
+                    
+                    chatBox.appendChild(div);
+                    chatBox.scrollTop = chatBox.scrollHeight;
                 }, 500);
             }
         }
