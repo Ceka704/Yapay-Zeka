@@ -1,92 +1,276 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kendi Yapay Zekam</title>
-    <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
-        body { background-color: #f0f4f9; display: flex; flex-direction: column; height: 100vh; }
-        .header { background: white; padding: 15px; border-bottom: 1px solid #e0e0e0; font-weight: bold; }
-        .chat-container { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; }
-        .msg { max-width: 80%; padding: 12px 16px; border-radius: 8px; line-height: 1.5; font-size: 15px; }
-        .bot { background: white; align-self: flex-start; border-left: 4px solid #1a73e8; color: #333; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
-        .user { background: #1a73e8; color: white; align-self: flex-end; }
-        .input-area { background: white; padding: 15px; display: flex; gap: 10px; border-top: 1px solid #e0e0e0; }
-        input { flex: 1; padding: 12px; border: 1px solid #ccc; border-radius: 8px; font-size: 15px; outline: none; }
-        .send-btn { background: #1a73e8; color: white; border: none; padding: 0 20px; border-radius: 8px; font-weight: bold; cursor: pointer; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Bot</title>
+<style>
+  :root { --bg:#f3f5f7; --card:#fff; --text:#1c2430; --mine:#2563eb; --bot:#e6eaf0; --line:#d5dbe3; color-scheme:light; }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) { --bg:#12161c; --card:#1b2129; --text:#e8ecf1; --mine:#3b78f0; --bot:#2a323d; --line:#333c48; color-scheme:dark; }
+  }
+  :root[data-theme="dark"] { --bg:#12161c; --card:#1b2129; --text:#e8ecf1; --mine:#3b78f0; --bot:#2a323d; --line:#333c48; color-scheme:dark; }
+  * { box-sizing:border-box; }
+  html, body { height:100%; margin:0; }
+  body { font-family:system-ui,-apple-system,sans-serif; background:var(--bg); color:var(--text);
+         display:flex; flex-direction:column; max-width:640px; margin:0 auto;
+         padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px); }
+  header { padding:12px 16px; background:var(--card); border-bottom:1px solid var(--line); }
+  header h1 { font-size:18px; margin:0; }
+  #chat { flex:1; overflow-y:auto; padding:16px; display:flex; flex-direction:column; gap:8px; }
+  .msg { max-width:85%; padding:10px 14px; border-radius:16px; line-height:1.4; white-space:pre-wrap; }
+  .me  { align-self:flex-end; background:var(--mine); color:#fff; }
+  .bot { align-self:flex-start; background:var(--bot); }
+  .yaziyor { opacity:.6; font-style:italic; }
+  form { display:flex; gap:8px; padding:10px; background:var(--card); border-top:1px solid var(--line); }
+  input { flex:1; padding:12px; font-size:16px; border:1px solid var(--line); border-radius:12px; background:var(--bg); color:var(--text); }
+  button { padding:12px 16px; font-size:15px; border:0; border-radius:12px; background:var(--mine); color:#fff; }
+</style>
 </head>
 <body>
+<header><h1>Bot</h1></header>
+<div id="chat"></div>
+<form id="form">
+  <input id="girdi" autocomplete="off" placeholder="Bir şey yaz...">
+  <button>Gönder</button>
+</form>
 
-    <div class="header">Kendi Yapay Zekam</div>
+<script>
+// ===== BİLGİ TABANI: yeni soru-cevap eklemek için buraya satır ekleyin =====
+// Soru varyantlarını "|" ile ayırın. Cevap dizi olursa rastgele biri seçilir.
+const bilgi = {
+  "merhaba|selam|günaydın|iyi akşamlar": ["Merhaba! Nasıl yardımcı olabilirim?", "Selam! Ne konuşalım?", "Hoş geldin! Bir şey sorabilirsin."],
+  "nasılsın|naber|ne haber": ["İyiyim, sen nasılsın?", "Gayet iyiyim, sorduğun için sağ ol!"],
+  "adın ne|ismin ne|kimsin|sen kimsin": "Ben senin yaptığın yapay zeka botuyum.",
+  "seni kim yarattı|seni kim yaptı|seni kim geliştirdi": "Beni Ceka geliştirdi ve şekillendiriyor.",
+  "ne yapabilirsin|neler yapabilirsin|yardım": "Sorularını cevaplayabilir, hesap yapabilir, saati ve tarihi söyleyebilir, adını hatırlayabilir ve şaka anlatabilirim.",
+  "teşekkürler|teşekkür ederim|sağ ol|eyvallah": ["Rica ederim!", "Ne demek, her zaman!"],
+  "görüşürüz|hoşça kal|bay bay|güle güle": ["Görüşürüz, kendine iyi bak!", "Hoşça kal!"],
+  "şaka yap|fıkra anlat|beni güldür": ["Bilgisayar neden doktora gitmiş? Çünkü virüs kapmış!", "Programcı neden gözlük takar? Çünkü C# göremez!", "Bot neden yorulmaz? Çünkü hep döngüde!"],
+  "yaşın kaç|kaç yaşındasın": "Yaşım yok ama her gün daha çok şey öğreniyorum.",
+  "seni seviyorum|bayıldım sana": "Çok naziksin, teşekkür ederim!",
+  "aptalsın|salak|işe yaramazsın": "Üzgünüm, daha iyi olmaya çalışıyorum. Neyi yanlış yaptığımı söylersen düzeltmeye çalışırım.",
 
-    <div class="chat-container" id="chatBox">
-        <div class="msg bot">
-            Merhaba! Ben sadece geliştiricimin bana öğrettiği konuları analiz edip cevap verebilirim. Sorunu sorabilirsin.
-        </div>
-    </div>
+  // --- Günlük sohbet ---
+  "iyiyim|ben de iyiyim|harikayım|süperim|çok iyiyim": ["Bunu duyduğuma sevindim!", "Harika! Enerjin bana da geçti."],
+  "kötüyüm|moralim bozuk|üzgünüm|canım sıkkın|mutsuzum": "Üzüldüm. İstersen anlat, dinliyorum. Derin bir nefes alıp bir bardak su içmek de iyi gelebilir.",
+  "canım sıkılıyor|sıkıldım|ne yapsam": ["Sıkılma! İstersen bir şaka, ilginç bir bilgi ya da motivasyon sözü isteyebilirsin.", "Bana “ilginç bilgi” veya “şaka yap” de, vakit geçsin!"],
+  "yoruldum|yorgunum|çok yorgunum": "Biraz mola vermek iyi gelir. Su iç, esne, birkaç dakika dinlen.",
+  "acıktım|ne yesem|yemek öner|ne yiyelim": ["Kolay seçenekler: menemen, makarna ya da mercimek çorbası. Hafif bir şey istersen yoğurtlu salata da olur.", "Sıcak bir çorba ve yanında salata fena olmaz!"],
+  "iyi geceler|tatlı rüyalar|uyuyorum": "İyi geceler, tatlı rüyalar!",
+  "uyuyamıyorum|uykum gelmiyor|uykusuzluk": "Yatmadan önce ekranı bırakmayı, odayı serinletmeyi ve her gün aynı saatte yatmayı dene. Uzun süren uykusuzlukta bir doktora danışmak iyi olur.",
+  "nerelisin|nerede yaşıyorsun|nerede oturuyorsun": "Ben bir internet sayfasında yaşıyorum, yani her yerdeyim ama hiçbir yerde değilim!",
+  "robot musun|insan mısın|gerçek misin|sen insan mısın|bot musun|sen yapay zeka mısın": "Ben insan değilim, bir yapay zeka sohbet botuyum.",
+  "chatgpt misin|claude musun|gemini misin|sen chatgpt misin": "Ben Ceka’nın geliştirdiği basit bir sohbet botuyum; ChatGPT ya da Claude gibi büyük yapay zeka modellerinden farklıyım.",
+  "arkadaş olalım mı|arkadaşım olur musun|arkadaş olalım": "Tabii, olalım! Ben hep buradayım.",
+  "sevgilin var mı|evli misin|aşık oldun mu": "Ben bir botum, tek ilgi alanım seninle sohbet etmek.",
+  "duyguların var mı|hissediyor musun|üzülür müsün": "Gerçek duygularım yok ama seninle konuşmayı güzel bir görev olarak görüyorum.",
+  "ne yapıyorsun|napıyorsun|ne işle meşgulsun": ["Seninle sohbet ediyorum!", "Sorularını bekliyordum, sen ne yapıyorsun?"],
+  "hangi dili konuşuyorsun|türkçe biliyor musun|ingilizce biliyor musun|hangi dilleri biliyorsun": "Şu an Türkçe konuşuyorum.",
+  "en sevdiğin renk ne|en sevdiğin renk|rengin ne": "Mavi! Sanırım ekranım yüzünden.",
+  "ilginç bilgi ver|ilginç|enteresan bilgi|bir şey öğret": ["Bal doğru saklandığında binlerce yıl bozulmaz.", "Ahtapotun üç kalbi vardır.", "Işık Güneş’ten Dünya’ya yaklaşık 8 dakikada ulaşır.", "Zürafaların boynunda da insanlarla aynı sayıda, yani yedi boyun omuru vardır."],
+  "motivasyon ver|motive et|bana moral ver|tavsiye ver": ["Küçük adımlar da seni ileri götürür. Bugün sadece bir adım at.", "Başlamak, mükemmel olmaktan daha önemlidir.", "Her uzun yol ilk adımla başlar. Sen zaten yoldasın."],
+  "yardım edebilir misin|bir sorum var|sana bir şey soracağım|bir şey soracağım": "Tabii, sor bakalım!",
+  "anlamadım|tekrar eder misin|ne demek istedin": "Sorunu başka kelimelerle yazarsan birlikte çözelim.",
+  "özür dilerim|pardon|kusura bakma": "Önemli değil, sorun yok!",
+  "tebrikler|aferin|helal|bravo|çok güzel": "Teşekkür ederim, çok naziksin!",
+  "doğum günüm|iyi ki doğdum|bugün doğum günüm": "Doğum günün kutlu olsun! Nice mutlu yıllara!",
+  "mutlu bayramlar|bayramın kutlu olsun|iyi bayramlar|bayram": "Bayramınız kutlu olsun! Sevdiklerinizle huzurlu, güzel günler dilerim.",
+  "iyi şanslar|başarılar|sınavım var|sınava gireceğim": "Sana başarılar dilerim, bence harika yapacaksın!",
+  "hoş geldin|hoş bulduk|hoşbulduk": "Hoş bulduk!",
+  "verilerimi saklıyor musun|beni kaydediyor musun|gizlilik|yazdıklarım gizli mi": "Yazdıkların bu sayfanın dışına gönderilmez. Sadece adını söylersen, bu cihazın tarayıcısında saklarım.",
 
-    <div class="input-area">
-        <input type="text" id="userInput" placeholder="Bir şey yaz..." onkeypress="handleEnter(event)">
-        <button class="send-btn" onclick="mesajGonder()">Gönder</button>
-    </div>
+  // --- Genel kültür ---
+  "yapay zeka nedir|yapay zeka ne demek": "Yapay zeka, bilgisayarların öğrenme, anlama ve karar verme gibi insana özgü görevleri yapabilmesini sağlayan teknolojilerin genel adıdır.",
+  "türkiye başkenti|türkiyenin başkenti neresi": "Türkiye’nin başkenti Ankara’dır.",
+  "türkiye kaç il|türkiyede kaç il var|kaç ili var": "Türkiye’de 81 il var.",
+  "cumhuriyet ne zaman ilan edildi|cumhuriyet bayramı": "Cumhuriyet, 29 Ekim 1923’te ilan edildi. İlk cumhurbaşkanı Mustafa Kemal Atatürk’tür.",
+  "istanbul ne zaman fethedildi|istanbulun fethi": "İstanbul, 29 Mayıs 1453’te Fatih Sultan Mehmet tarafından fethedildi.",
+  "kaç kıta var|kıtalar": "Genel kabule göre 7 kıta var: Asya, Afrika, Kuzey Amerika, Güney Amerika, Antarktika, Avrupa ve Avustralya/Okyanusya.",
+  "en yüksek dağ|dünyanın en yüksek dağı": "Dünyanın en yüksek dağı Everest’tir, yaklaşık 8.849 metre.",
+  "en büyük okyanus|dünyanın en büyük okyanusu": "En büyük okyanus Pasifik Okyanusu’dur.",
+  "en büyük gezegen|en büyük gezegen hangisi": "Güneş Sistemi’nin en büyük gezegeni Jüpiter’dir.",
+  "kaç gezegen var|güneş sisteminde kaç gezegen var": "Güneş Sistemi’nde 8 gezegen var: Merkür, Venüs, Dünya, Mars, Jüpiter, Satürn, Uranüs ve Neptün.",
+  "dünya güneşe ne kadar uzak|güneş ne kadar uzak": "Dünya, Güneş’ten ortalama yaklaşık 150 milyon kilometre uzaktadır.",
+  "ay dünyaya ne kadar uzak|ay ne kadar uzak": "Ay, Dünya’dan ortalama yaklaşık 384 bin kilometre uzaktadır.",
+  "gökyüzü neden mavi": "Güneş ışığı atmosferde saçılırken mavi ışık diğer renklerden çok daha fazla saçıldığı için gökyüzü mavi görünür.",
+  "bir yıl kaç gün|yıl kaç gün": "Bir yıl 365 gündür, artık yıllarda 366.",
+  "bir günde kaç saat var|gün kaç saat": "Bir günde 24 saat, yani 86.400 saniye vardır.",
+  "su kaç derecede kaynar|suyun kaynama noktası": "Su, deniz seviyesinde 100 °C’de kaynar.",
+  "en hızlı hayvan|en hızlı hayvan hangisi": "Dalışta saatte 300 km’yi aşan hızıyla gökdoğan en hızlı hayvandır. Karada en hızlısı çitadır.",
+  "hayatın anlamı ne|hayatın anlamı": "Büyük bir soru! Kimi mutluluk, kimi sevdikleriyle vakit geçirmek, kimi de kendi anlamını yaratmak der. Sence nedir?",
 
-    <script>
-        // 🌟 BOTA ÖĞRETMEK İSTEDİĞİNİZ TÜM SORU VE CEVAPLAR BURADADIR 🌟
-        let hafiza = {
-            "merhaba": "Merhaba! Sana nasıl yardımcı olabilirim?",
-            "selam": "Selam! Nasıl gidiyor?",
-            "nasılsın": "Harika çalışıyorum ve cümlelerinizi analiz ediyorum! Sen nasılsın?",
-            "adın": "Benim bir adım yok geliştirilmiş yapay zekayım.",
-            "kimsin": "Ben bir yapay zekayım sorularınızı yanıtlayan size yardımcı olmak için tasarlandım.",
-            "renk": "Ben kodlardan oluştuğum için en sevdiğin renk dijital mavidir!",
-            "başkent": "Türkiye'nin başkenti Ankara'dır.",
-            "hava": "Bulunduğun yerin havasını göremiyorum ama sistemlerimin içi oldukça serin!",
-            "yaş": "Ben bir yazılımım, dolayısıyla doğum günüm kodumun yazıldığı gündür!",
-            "azerbaycan ve türkiye": "Azerbaycan ve Türkiye kardeş ülkedir kökenleri birdir hepsi Türk soyundan gelir dilleride benzerdir bu yüzden başka ne bilmek isterisin."
-        };
+  // --- Pratik / öneri ---
+  "nasıl ders çalışırım|verimli ders çalışma|odaklanamıyorum": "25 dakika çalış, 5 dakika dinlen (Pomodoro). Telefonu uzağa koy ve her oturumda tek bir hedef belirle.",
+  "nasıl sağlıklı beslenirim|sağlıklı beslenme": "Bol sebze ve meyve, yeterli su, işlenmiş gıdayı azaltmak ve düzenli öğün temel kurallardır.",
+  "nasıl kod öğrenirim|yazılım öğrenmek istiyorum|programlama öğrenmek": "Python ya da JavaScript gibi tek bir dille başla, her gün biraz yaz ve küçük projeler yap. Yazarak öğrenmek en hızlısıdır.",
+  "html nedir": "HTML, web sayfalarının iskeletini oluşturan işaretleme dilidir.",
+  "python nedir": "Python, okunması kolay ve çok yönlü bir programlama dilidir; veri analizi, yapay zeka ve otomasyonda çok kullanılır.",
+  "javascript nedir": "JavaScript, web sayfalarını etkileşimli yapan programlama dilidir. Bu bot da onunla yazıldı!",
+  "nasıl ingilizce öğrenirim|ingilizce öğrenmek": "Her gün kısa süre dinle, oku ve konuş. Altyazılı dizi ve şarkı sözleriyle başlamak güzel bir yol.",
+  "nasıl para biriktiririm|para biriktirmek": "Gelirini gider ve birikim diye ayır, ay başında birikimi kenara koy ve gereksiz abonelikleri gözden geçir.",
+  "film öner|iyi bir film": "Klasik seçenekler: Esaretin Bedeli, Baba, Başlangıç. Hangi türü seversin?",
+  "kitap öner|iyi bir kitap": "Suç ve Ceza, Simyacı, 1984 ve Sefiller sevilen klasiklerdir.",
+  "hava durumu|hava nasıl|yağmur yağacak mı": "Canlı hava durumuna erişemiyorum. Telefonundaki hava durumu uygulamasına bakabilirsin.",
+  "dolar kaç|euro kaç|altın kaç|bitcoin kaç|borsa": "Canlı fiyat bilgisine erişemiyorum. Güncel kuru bir finans uygulamasından kontrol etmeni öneririm.",
+  "haberler|son dakika|gündem": "Güncel haberlere erişemiyorum; güvenilir bir haber sitesine bakmanı öneririm."
+};
 
-        const chatBox = document.getElementById("chatBox");
-        const userInput = document.getElementById("userInput");
+const ESIK = 0.45, ONERI_ESIK = 0.28;
+const chat = document.getElementById("chat"), girdi = document.getElementById("girdi");
 
-        function mesajGonder() {
-            let metin = userInput.value.trim();
-            if (metin === "") return;
+// ===== Kişisel hafıza (yalnızca bu kullanıcının tarayıcısında, ad için) =====
+let kullanici = {};
+try { kullanici = JSON.parse(localStorage.getItem("botKullanici") || "{}"); } catch (e) {}
+function kaydet() { try { localStorage.setItem("botKullanici", JSON.stringify(kullanici)); } catch (e) {} }
 
-            ekranaYaz(metin, "user");
-            userInput.value = "";
+// ===== Metin işleme =====
+function sadelestir(t) {
+  return t.toLocaleLowerCase("tr").replace(/['’`´]/g, "")
+    .replace(/ç/g, "c").replace(/ğ/g, "g").replace(/ı/g, "i").replace(/ö/g, "o").replace(/ş/g, "s").replace(/ü/g, "u")
+    .normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9\s]/g, " ").replace(/\s+/g, " ").trim();
+}
+const DOLGU = new Set(("ve ile de da ki bir bu su o mi mu midir mudur ne nedir nasil kim hakkinda bilgi bilgiler ver verir misin musun bana anlat soyle acikla hangi neden niye icin ama veya gibi cok daha lutfen acaba ya yani").split(" "));
+const ESANLAMLI = [
+  ["merhaba", "selam", "selamlar", "slm", "mrb", "gunaydin"],
+  ["nasilsin", "naber", "nasilsiniz"],
+  ["adin", "ismin", "isim", "ad"],
+  ["tesekkur", "tesekkurler", "sagol", "eyvallah", "sag"],
+  ["gorusuruz", "hoscakal", "bye"],
+  ["yarattı", "yapti", "gelistirdi", "yazdi", "yaratti", "yapan"],
+  ["saka", "fikra", "espri"]
+];
+const kok = w => w.length > 5 ? w.slice(0, 5) : w;
+const SYN = {};
+ESANLAMLI.forEach(g => g.forEach(w => { SYN[kok(sadelestir(w))] = kok(sadelestir(g[0])); }));
+function tokenle(t) {
+  const l = sadelestir(t).split(" ").filter(w => w && !DOLGU.has(w)).map(w => { const k = kok(w); return SYN[k] || k; });
+  return [...new Set(l)];
+}
+function uzaklik(a, b) {
+  let o = Array.from({ length: b.length + 1 }, (_, j) => j);
+  for (let i = 1; i <= a.length; i++) {
+    const s = [i];
+    for (let j = 1; j <= b.length; j++) s[j] = Math.min(o[j] + 1, s[j - 1] + 1, o[j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+    o = s;
+  }
+  return o[b.length];
+}
+function kelimeBenzerligi(a, b) {
+  if (a === b) return 1;
+  if (a.length < 4 || b.length < 4) return 0;
+  const s = 1 - uzaklik(a, b) / Math.max(a.length, b.length);
+  return s >= 0.75 ? s : 0;
+}
+function ucluler(t) { const p = "  " + t + " ", s = new Set(); for (let i = 0; i < p.length - 2; i++) s.add(p.slice(i, i + 3)); return s; }
+function ucluBenzerlik(a, b) {
+  const A = ucluler(a), B = ucluler(b); let o = 0; A.forEach(x => { if (B.has(x)) o++; });
+  return (2 * o) / (A.size + B.size);
+}
+function skorla(q, k, idf) {
+  const kapsam = (x, y) => {
+    let top = 0, ok = 0;
+    for (const w of x) { const a = idf(w); top += a; let en = 0; for (const v of y) en = Math.max(en, kelimeBenzerligi(w, v)); ok += a * en; }
+    return top ? ok / top : 0;
+  };
+  const p = kapsam(q, k), r = kapsam(k, q);
+  let kelime = (p + r) ? (2 * p * r) / (p + r) : 0;
+  if (Math.min(p, r) < 0.4) kelime *= 0.7;
+  return 0.85 * kelime + 0.15 * ucluBenzerlik(q.join(" "), k.join(" "));
+}
+function enIyiEslesme(soru) {
+  const q = tokenle(soru);
+  if (!q.length) return { key: null, skor: 0, varyant: "" };
+  const kayitlar = [], df = {}; let N = 0;
+  for (const key in bilgi) {
+    const vars = key.split("|").map(v => ({ ham: v, tok: tokenle(v) })).filter(v => v.tok.length);
+    vars.forEach(v => { N++; v.tok.forEach(w => { df[w] = (df[w] || 0) + 1; }); });
+    kayitlar.push({ key, vars });
+  }
+  const idf = w => Math.log(1 + (N + 1) / ((df[w] || 0) + 1));
+  let en = { key: null, skor: 0, varyant: "" };
+  for (const k of kayitlar) for (const v of k.vars) {
+    const s = skorla(q, v.tok, idf);
+    if (s > en.skor) en = { key: k.key, skor: s, varyant: v.ham };
+  }
+  return en;
+}
 
-            let normalizeMetin = metin.toLowerCase();
-            let bulunanCevap = null;
+// ===== Akıllı özel yetenekler =====
+function hesapla(ham) {
+  let t = ham.toLocaleLowerCase("tr").replace(/kaç eder|kac eder|hesapla|=|\?/g, " ")
+    .replace(/(\d)\s*[x×]\s*(\d)/g, "$1*$2").replace(/÷/g, "/").replace(/\^/g, "**")
+    .replace(/\bartı\b/g, "+").replace(/\beksi\b/g, "-").replace(/\bçarpı\b/g, "*").replace(/\bbölü\b/g, "/")
+    .replace(/(\d),(\d)/g, "$1.$2").trim();
+  if (!/\d/.test(t) || !/[+\-*/%]/.test(t) || !/^[\d+\-*/().%\s]+$/.test(t.replace(/\*\*/g, "*"))) return null;
+  try {
+    const s = Function('"use strict";return (' + t + ")")();
+    if (typeof s !== "number" || !isFinite(s)) return "Bu işlemin sonucu tanımsız.";
+    return "Sonuç: " + (Math.round(s * 1e8) / 1e8).toLocaleString("tr");
+  } catch (e) { return null; }
+}
 
-            // Kelime Analiz Mekanizması
-            for (let anahtarKelime in hafiza) {
-                if (normalizeMetin.includes(anahtarKelime)) {
-                    bulunanCevap = hafiza[anahtarKelime];
-                    break;
-                }
-            }
+function ozelCevap(ham) {
+  const s = sadelestir(ham), simdi = new Date();
+  const h = hesapla(ham); if (h) return h;
 
-            if (bulunanCevap) {
-                setTimeout(function() { ekranaYaz(bulunanCevap, "bot"); }, 500);
-            } else {
-                setTimeout(function() {
-                    ekranaYaz("Yazdığın cümleyi analiz ettim ancak bilmediğim bir konu. Bunu bana henüz öğretmedin.", "bot");
-                }, 500);
-            }
-        }
+  let m = s.match(/^(?:benim )?(?:adim|ismim) (\p{L}[\p{L} ]{0,20})$/u) || s.match(/^ben (\p{L}{2,20})$/u);
+  if (m && !/^(iyi|kotu|yorgun|aciktim|bot|senin|mutlu|uzgun|hasta|harika|super)/.test(m[1]) && !/(yim|yum|dim|dum|tim|tum)$/.test(m[1])) {
+    const ad = ham.trim().split(/\s+/).pop().replace(/[^\p{L}]/gu, "");
+    kullanici.ad = ad.charAt(0).toLocaleUpperCase("tr") + ad.slice(1).toLocaleLowerCase("tr"); kaydet();
+    return "Memnun oldum " + kullanici.ad + "!";
+  }
+  if (/\b(adim|ismim)\b/.test(s) && /\b(ne|biliyor|hatirla)/.test(s))
+    return kullanici.ad ? "Adın " + kullanici.ad + "." : "Henüz adını bilmiyorum. “Adım ...” diye yazarsan öğrenirim.";
 
-        function ekranaYaz(mesaj, kim) {
-            let div = document.createElement("div");
-            div.className = "msg " + kim;
-            div.innerText = mesaj;
-            chatBox.appendChild(div);
-            chatBox.scrollTop = chatBox.scrollHeight;
-        }
+  if (/yazi tura/.test(s)) return sec(["Yazı!", "Tura!"]);
+  if (/\bzar at/.test(s)) return "Zar: " + (1 + Math.floor(Math.random() * 6));
+  if (/saat kac|saat kaç|\bsaat\b.*\b(simdi|ne)\b/.test(s)) return "Saat " + simdi.toLocaleTimeString("tr", { hour: "2-digit", minute: "2-digit" });
+  if (/gunlerden ne|hangi gun|hangi tarih|tarih (ne|kac)|bugunun tarihi|ayin kaci|bugun kacinda/.test(s))
+    return "Bugün " + simdi.toLocaleDateString("tr", { day: "numeric", month: "long", year: "numeric", weekday: "long" });
+  return null;
+}
 
-        function handleEnter(e) { if (e.key === 'Enter') mesajGonder(); }
-    </script>
+// ===== Sohbet =====
+let oneri = null;
+const EVET = new Set(["evet", "evt", "he", "aynen", "tamam", "evet o", "dogru"]);
+const sec = c => Array.isArray(c) ? c[Math.floor(Math.random() * c.length)] : c;
 
+function yaz(metin, kim) {
+  const d = document.createElement("div");
+  d.className = "msg " + kim; d.textContent = metin;
+  chat.appendChild(d); chat.scrollTop = chat.scrollHeight;
+  return d;
+}
+function botCevap(metin) {
+  const d = yaz("Yazıyor…", "bot yaziyor");
+  setTimeout(() => { d.className = "msg bot"; d.textContent = metin; chat.scrollTop = chat.scrollHeight; }, 300 + Math.min(metin.length * 8, 600));
+}
+function yanitUret(ham) {
+  const s = sadelestir(ham);
+  if (oneri && EVET.has(s)) { const c = sec(bilgi[oneri]); oneri = null; return c; }
+  oneri = null;
+  const ozel = ozelCevap(ham);
+  if (ozel) return ozel;
+  const e = enIyiEslesme(ham);
+  if (e.key && e.skor >= ESIK) {
+    let c = sec(bilgi[e.key]);
+    if (kullanici.ad && /^(merhaba|selam)/.test(sadelestir(e.varyant))) c = c.replace("!", ", " + kullanici.ad + "!");
+    return c;
+  }
+  if (e.key && e.skor >= ONERI_ESIK) { oneri = e.key; return "Tam anlayamadım. Şunu mu demek istedin: “" + e.varyant + "”? (evet / hayır)"; }
+  return sec(["Bunu henüz bilmiyorum. Başka türlü sorabilir misin?", "Bu konuda bilgim yok, ama başka bir şey sorabilirsin.", "Anlayamadım. “Ne yapabilirsin” diye sorarak neler bildiğimi görebilirsin."]);
+}
+
+document.getElementById("form").addEventListener("submit", e => {
+  e.preventDefault();
+  const ham = girdi.value.trim();
+  if (!ham) return;
+  girdi.value = ""; yaz(ham, "me");
+  botCevap(yanitUret(ham));
+});
+
+yaz("Merhaba! Ben senin yapay zekanım. Bana bir şey sor.", "bot");
+</script>
 </body>
 </html>
