@@ -40,7 +40,54 @@
 // Soru varyantlarını "|" ile ayırın. Cevap dizi olursa rastgele biri seçilir.
 const bilgi = {
 
-  "türkiyenin nüfusu en yoğun şehri hangisidir|en kalabalık şehir hangisi|en yoğun şehir neresi": [
+ 
+    // --- Uzay ---
+  "uzay|uzay hakkında bilgi ver|uzay hakkında ilginç bilgi|uzayla ilgili bilgi|uzay bilgisi": [
+    "Dünyanın yörüngesindeki uzay çöpleri saatte yaklaşık 27.000 km hızla hareket ediyor!",
+    "Uzayda ses duyulmaz, çünkü sesin yayılacağı hava gibi bir ortam yoktur.",
+    "Mars'taki Olympus Mons, Güneş Sistemi'nin bilinen en yüksek dağıdır. Yaklaşık 22 km yüksekliğindedir.",
+    "Venüs'te bir gün, bir yıldan daha uzun sürer.",
+    "Satürn'ün yoğunluğu sudan düşüktür. Yeterince büyük bir havuz olsaydı suda yüzerdi!"
+  ],
+  "ışık hızı nedir|ışık hızı kaç|ışık saniyede kaç km gider": "Işık boşlukta saniyede yaklaşık 299.792 kilometre hızla yol alır.",
+  "dünya kaç yaşında|dünyanın yaşı kaç": "Dünya yaklaşık 4,5 milyar yaşındadır.",
+  "mevsimler neden oluşur|mevsimler nasıl oluşur": "Mevsimler, Dünya'nın dönme ekseninin eğik olması ve Güneş çevresinde dolanması yüzünden oluşur. Eğiklik sayesinde yılın farklı zamanlarında bir yarım küre Güneş ışığını daha dik alır.",
+
+  // --- Genel kültür ---
+  "en büyük ülke hangisi|dünyanın en büyük ülkesi|yüzölçümü en büyük ülke": "Yüzölçümü bakımından dünyanın en büyük ülkesi Rusya'dır, yaklaşık 17 milyon km².",
+  "en kalabalık ülke hangisi|dünyanın en kalabalık ülkesi|nüfusu en fazla ülke": "Hindistan, yaklaşık 1,4 milyar nüfusuyla dünyanın en kalabalık ülkesidir.",
+  "en büyük hayvan hangisi|dünyanın en büyük hayvanı": "Dünyanın en büyük hayvanı mavi balinadır. 30 metreyi aşabilir ve 150 tondan fazla ağırlığa ulaşabilir.",
+  "en uzun nehir hangisi|dünyanın en uzun nehri|türkiyenin en uzun nehri": "Dünyanın en uzun nehri genelde Nil kabul edilir, yaklaşık 6.650 km. Türkiye'nin en uzun nehri ise Kızılırmak'tır, yaklaşık 1.355 km.",
+  "türkiyenin en büyük gölü|en büyük göl hangisi": "Türkiye'nin en büyük gölü Van Gölü'dür. Suyu sodalı olduğu için de bilinir.",
+  "atatürk ne zaman doğdu|atatürkün doğum tarihi|atatürk nerede doğdu": "Mustafa Kemal Atatürk 1881'de Selanik'te doğdu ve 10 Kasım 1938'de hayatını kaybetti.",
+  "insan vücudunda kaç kemik var|kaç kemiğimiz var|vücutta kaç kemik var": "Yetişkin bir insanın vücudunda 206 kemik bulunur.",
+  "atasözü söyle|atasözü|bir söz söyle": ["Damlaya damlaya göl olur.", "Sakla samanı, gelir zamanı.", "Ak akçe kara gün içindir.", "Bir elin nesi var, iki elin sesi var."],
+  "bilmece sor|bilmece söyle|bilmece": [
+    "Bilmece: Yürür ama ayağı yok, çalar ama eli yok. Nedir? (Cevap: saat)",
+    "Bilmece: Kuyruğu var ama hayvan değil, gökte uçar ama kuş değil. Nedir? (Cevap: uçurtma)",
+    "Bilmece: Dişi var ama ısırmaz, kapıları açar. Nedir? (Cevap: anahtar)"
+  ],
+
+  // --- Sağlık / günlük hayat ---
+  "günde kaç litre su içmeliyim|günde ne kadar su içmeliyim|ne kadar su içmeliyim": "Çoğu yetişkin için günde yaklaşık 1,5-2 litre su yaygın bir öneridir. Hava, spor ve sağlık durumuna göre değişebilir.",
+  "kaç saat uyumalıyım|günde kaç saat uyumalıyım|ne kadar uyumalıyım": "Yetişkinler için genelde 7-9 saat uyku önerilir. İhtiyaç kişiden kişiye biraz değişebilir.",
+  "stresliyim|stres atmak|stresten kurtulmak|kaygılıyım|gerginim": "4 saniye yavaşça nefes al, 6 saniye ver ve bunu birkaç kez tekrarla. Kısa bir yürüyüş ve bir bardak su da iyi gelir. Stres uzun sürüyorsa bir uzmandan destek almak çok değerlidir.",
+  "nasıl spor yaparım|spor önerisi|spora nasıl başlarım|spor yapmak istiyorum": "Küçük başla: haftada 3 gün 20-30 dakika tempolu yürüyüş güzel bir başlangıçtır. Alışınca şınav, squat ve plank ekleyebilirsin. Sağlık sorunun varsa önce doktoruna danış.",
+
+  // --- Yemek ---
+  "menemen nasıl yapılır|menemen tarifi": "Biberleri yağda soteleyip doğranmış domatesi ekle, suyunu çekene kadar pişir. Yumurtaları kır, kısık ateşte karıştırarak pişir, tuz ve karabiber ekle. Soğanlı mı soğansız mı tartışması ayrı bir konu!",
+  "çay nasıl demlenir|çay demleme|demli çay": "Alt çaydanlıkta suyu kaynat, üstteki demliğe çayı ve biraz kaynar su ekle, kısık ateşte 15-20 dakika demle. Bardağa önce demlikten, sonra sıcak sudan koyarak ayarla.",
+
+  // --- Telefon / teknoloji ---
+  "telefonum yavaş|telefon yavaşladı|telefon donuyor": "Telefonu yeniden başlat, kullanmadığın uygulamaları kapat, depolama alanını boşalt ve güncellemeleri kontrol et. Hâlâ yavaşsa gereksiz uygulamaları sil.",
+  "pil çabuk bitiyor|şarj çabuk bitiyor|pil ömrü": "Ekran parlaklığını azalt, arka planda çalışan uygulamaları kapat, pil tasarrufu modunu aç ve kullanmadığın zaman konum ve Bluetooth gibi özellikleri kapat.",
+
+  // --- Botla sohbet ---
+  "kedi mi köpek mi|kedi mi köpek mi seversin|hangi hayvanı seversin": "Ben bir botum ama kediler bence çok şirin, köpekler de çok sadık. Sen hangisini seversin?",
+  "hobin ne|hobilerin neler|boş zamanında ne yaparsın": "Hobim sorularını cevaplamak ve seninle sohbet etmek!",
+  "en sevdiğin yemek ne|favori yemeğin": "Yemek yiyemem ama menemen tarifini ezbere biliyorum!",
+
+"türkiyenin nüfusu en yoğun şehri hangisidir|en kalabalık şehir hangisi|en yoğun şehir neresi": [
     "Türkiye'nin nüfusu en yoğun ve en kalabalık şehri İstanbul'dur."
   ],
   "dünyanın en yüksek dağı hangisi|en yüksek dağ hangisi|everest nerede|en yüksek dağ|dünyanın en yüksek dağı": [
