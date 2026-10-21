@@ -39,15 +39,14 @@
 // ===== BİLGİ TABANI: yeni soru-cevap eklemek için buraya satır ekleyin =====
 // Soru varyantlarını "|" ile ayırın. Cevap dizi olursa rastgele biri seçilir.
 const bilgi = {
-  
 
   "türkiyenin nüfusu en yoğun şehri hangisidir|en kalabalık şehir hangisi|en yoğun şehir neresi": [
     "Türkiye'nin nüfusu en yoğun ve en kalabalık şehri İstanbul'dur."
   ],
-  "dünyanın en yüksek dağı hangisi|en yüksek dağ hangisi|everest nerede": [
-    "Dünyanın en yüksek dağı, Nepal ile Çin sınırında yer alan ve yüksekliği 8.848 metre olan Everest Dağı'dır."
+  "dünyanın en yüksek dağı hangisi|en yüksek dağ hangisi|everest nerede|en yüksek dağ|dünyanın en yüksek dağı": [
+    "Dünyanın en yüksek dağı, Nepal ile Çin sınırında yer alan ve yüksekliği yaklaşık 8.849 metre olan Everest Dağı'dır."
   ],
-  "yapabileceğin en iyi şey nedir|en iyi ne yaparsın|neler yapabiliyorsun": [
+  "yapabileceğin en iyi şey nedir|en iyi ne yaparsın": [
     "Metin analizi yapabilir, kod yazabilir, soruları yanıtlayabilir, karmaşık konuları özetleyebilir ve yaratıcı yazarlık konusunda size yardımcı olabilirim."
   ],
   "gökyüzü neden mavi renkli|gökyüzü neden mavi|gök niye mavi": [
@@ -56,13 +55,12 @@ const bilgi = {
   "suyun kimyasal formülü nedir|suyun formülü|su formülü": [
     "Suyun kimyasal formülü H₂O'dur. İki hidrojen ve bir oksijen atomundan oluşur."
   ],
-   
 
- "merhaba|selam|günaydın|iyi akşamlar": ["Merhaba! Nasıl yardımcı olabilirim?", "Selam! Ne konuşalım?", "Hoş geldin! Bir şey sorabilirsin."],
+  "merhaba|selam|günaydın|iyi akşamlar": ["Merhaba! Nasıl yardımcı olabilirim?", "Selam! Ne konuşalım?", "Hoş geldin! Bir şey sorabilirsin."],
   "nasılsın|naber|ne haber": ["İyiyim, sen nasılsın?", "Gayet iyiyim, sorduğun için sağ ol!"],
   "adın ne|ismin ne|kimsin|sen kimsin": "Ben senin yaptığın yapay zeka botuyum.",
   "seni kim yarattı|seni kim yaptı|seni kim geliştirdi": "Beni Ceka geliştirdi ve şekillendiriyor.",
-  "ne yapabilirsin|neler yapabilirsin|yardım": "Sorularını cevaplayabilir, hesap yapabilir, saati ve tarihi söyleyebilir, adını hatırlayabilir ve şaka anlatabilirim.",
+  "ne yapabilirsin|neler yapabilirsin|neler yapabiliyorsun|yardım": "Sorularını cevaplayabilir, hesap yapabilir, saati ve tarihi söyleyebilir, adını hatırlayabilir ve şaka anlatabilirim.",
   "teşekkürler|teşekkür ederim|sağ ol|eyvallah": ["Rica ederim!", "Ne demek, her zaman!"],
   "görüşürüz|hoşça kal|bay bay|güle güle": ["Görüşürüz, kendine iyi bak!", "Hoşça kal!"],
   "şaka yap|fıkra anlat|beni güldür": ["Bilgisayar neden doktora gitmiş? Çünkü virüs kapmış!", "Programcı neden gözlük takar? Çünkü C# göremez!", "Bot neden yorulmaz? Çünkü hep döngüde!"],
@@ -106,13 +104,11 @@ const bilgi = {
   "cumhuriyet ne zaman ilan edildi|cumhuriyet bayramı": "Cumhuriyet, 29 Ekim 1923’te ilan edildi. İlk cumhurbaşkanı Mustafa Kemal Atatürk’tür.",
   "istanbul ne zaman fethedildi|istanbulun fethi": "İstanbul, 29 Mayıs 1453’te Fatih Sultan Mehmet tarafından fethedildi.",
   "kaç kıta var|kıtalar": "Genel kabule göre 7 kıta var: Asya, Afrika, Kuzey Amerika, Güney Amerika, Antarktika, Avrupa ve Avustralya/Okyanusya.",
-  "en yüksek dağ|dünyanın en yüksek dağı": "Dünyanın en yüksek dağı Everest’tir, yaklaşık 8.849 metre.",
   "en büyük okyanus|dünyanın en büyük okyanusu": "En büyük okyanus Pasifik Okyanusu’dur.",
   "en büyük gezegen|en büyük gezegen hangisi": "Güneş Sistemi’nin en büyük gezegeni Jüpiter’dir.",
   "kaç gezegen var|güneş sisteminde kaç gezegen var": "Güneş Sistemi’nde 8 gezegen var: Merkür, Venüs, Dünya, Mars, Jüpiter, Satürn, Uranüs ve Neptün.",
   "dünya güneşe ne kadar uzak|güneş ne kadar uzak": "Dünya, Güneş’ten ortalama yaklaşık 150 milyon kilometre uzaktadır.",
   "ay dünyaya ne kadar uzak|ay ne kadar uzak": "Ay, Dünya’dan ortalama yaklaşık 384 bin kilometre uzaktadır.",
-  "gökyüzü neden mavi": "Güneş ışığı atmosferde saçılırken mavi ışık diğer renklerden çok daha fazla saçıldığı için gökyüzü mavi görünür.",
   "bir yıl kaç gün|yıl kaç gün": "Bir yıl 365 gündür, artık yıllarda 366.",
   "bir günde kaç saat var|gün kaç saat": "Bir günde 24 saat, yani 86.400 saniye vardır.",
   "su kaç derecede kaynar|suyun kaynama noktası": "Su, deniz seviyesinde 100 °C’de kaynar.",
@@ -135,7 +131,10 @@ const bilgi = {
   "haberler|son dakika|gündem": "Güncel haberlere erişemiyorum; güvenilir bir haber sitesine bakmanı öneririm."
 };
 
-const ESIK = 0.45, ONERI_ESIK = 0.28;
+// ESIK: cevap vermek için gereken en düşük puan | ONERI_ESIK: "şunu mu demek istedin?" için en düşük puan
+// FARK: en iyi eşleşmeden en fazla bu kadar geride kalan girişlerin cevapları da birleştirilir
+// EN_FAZLA: tek cevapta birleştirilecek en fazla parça sayısı
+const ESIK = 0.45, ONERI_ESIK = 0.28, FARK = 0.2, EN_FAZLA = 3;
 const chat = document.getElementById("chat"), girdi = document.getElementById("girdi");
 
 // ===== Kişisel hafıza (yalnızca bu kullanıcının tarayıcısında, ad için) =====
@@ -197,9 +196,11 @@ function skorla(q, k, idf) {
   if (Math.min(p, r) < 0.4) kelime *= 0.7;
   return 0.85 * kelime + 0.15 * ucluBenzerlik(q.join(" "), k.join(" "));
 }
-function enIyiEslesme(soru) {
+
+// Her giriş için en iyi varyant puanını hesaplar, puana göre büyükten küçüğe sıralı liste döndürür
+function eslesmeler(soru) {
   const q = tokenle(soru);
-  if (!q.length) return { key: null, skor: 0, varyant: "" };
+  if (!q.length) return [];
   const kayitlar = [], df = {}; let N = 0;
   for (const key in bilgi) {
     const vars = key.split("|").map(v => ({ ham: v, tok: tokenle(v) })).filter(v => v.tok.length);
@@ -207,12 +208,14 @@ function enIyiEslesme(soru) {
     kayitlar.push({ key, vars });
   }
   const idf = w => Math.log(1 + (N + 1) / ((df[w] || 0) + 1));
-  let en = { key: null, skor: 0, varyant: "" };
-  for (const k of kayitlar) for (const v of k.vars) {
-    const s = skorla(q, v.tok, idf);
-    if (s > en.skor) en = { key: k.key, skor: s, varyant: v.ham };
-  }
-  return en;
+  return kayitlar.map(k => {
+    let en = { key: k.key, skor: 0, varyant: "" };
+    for (const v of k.vars) {
+      const s = skorla(q, v.tok, idf);
+      if (s > en.skor) en = { key: k.key, skor: s, varyant: v.ham };
+    }
+    return en;
+  }).sort((a, b) => b.skor - a.skor);
 }
 
 // ===== Akıllı özel yetenekler =====
@@ -253,6 +256,7 @@ function ozelCevap(ham) {
 // ===== Sohbet =====
 let oneri = null;
 const EVET = new Set(["evet", "evt", "he", "aynen", "tamam", "evet o", "dogru"]);
+const HAYIR = new Set(["hayir", "yok", "hayir degil", "degil", "olmaz"]);
 const sec = c => Array.isArray(c) ? c[Math.floor(Math.random() * c.length)] : c;
 
 function yaz(metin, kim) {
@@ -268,14 +272,20 @@ function botCevap(metin) {
 function yanitUret(ham) {
   const s = sadelestir(ham);
   if (oneri && EVET.has(s)) { const c = sec(bilgi[oneri]); oneri = null; return c; }
+  if (oneri && HAYIR.has(s)) { oneri = null; return "Tamam. Sorunu başka kelimelerle yazarsan tekrar bakarım."; }
   oneri = null;
   const ozel = ozelCevap(ham);
   if (ozel) return ozel;
-  const e = enIyiEslesme(ham);
+
+  const liste = eslesmeler(ham);
+  const e = liste[0] || { key: null, skor: 0, varyant: "" };
   if (e.key && e.skor >= ESIK) {
-    let c = sec(bilgi[e.key]);
-    if (kullanici.ad && /^(merhaba|selam)/.test(sadelestir(e.varyant))) c = c.replace("!", ", " + kullanici.ad + "!");
-    return c;
+    // En iyi eşleşmeye yakın puan alan girişlerin cevaplarını topla ve birleştir
+    const secilen = liste.filter(x => x.skor >= ESIK && e.skor - x.skor <= FARK).slice(0, EN_FAZLA);
+    const parcalar = [...new Set(secilen.map(x => sec(bilgi[x.key])))];
+    if (kullanici.ad && /^(merhaba|selam)/.test(sadelestir(e.varyant)))
+      parcalar[0] = parcalar[0].replace("!", ", " + kullanici.ad + "!");
+    return parcalar.join(" ");
   }
   if (e.key && e.skor >= ONERI_ESIK) { oneri = e.key; return "Tam anlayamadım. Şunu mu demek istedin: “" + e.varyant + "”? (evet / hayır)"; }
   return sec(["Bunu henüz bilmiyorum. Başka türlü sorabilir misin?", "Bu konuda bilgim yok, ama başka bir şey sorabilirsin.", "Anlayamadım. “Ne yapabilirsin” diye sorarak neler bildiğimi görebilirsin."]);
